@@ -1,0 +1,255 @@
+
+.hangar-page {
+  position: relative;
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  overflow: hidden; /* Evita el scroll de la página completa */
+}
+
+.hangar-content {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-height: 70vh; /* Limita la altura */
+  overflow-y: auto; /* Permite scroll solo en esta sección */
+}
+
+.planes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  overflow-y: auto; /* Asegura que el scroll solo aplique en los aviones */
+  max-height: 60vh; /* Ajusta esto según la necesidad */
+  padding: 10px;
+}
+/* Contenedor principal que ocupa toda la pantalla */
+.hangar-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+
+}
+
+/* Video de fondo a pantalla completa */
+.background-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 50%;
+  min-height: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  object-fit: cover; /* Para mantener proporciones (si tu video lo permite) */
+}
+
+/* Contenedor de la cabecera (incluye tienda, título y datos del usuario) */
+.hangar-header {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* Espaciado máximo entre elementos */
+  align-items: center;
+  padding: 0 2rem;
+  z-index: 10; /* Asegura que siempre esté encima del scroll */
+}
+
+
+/* Estilo específico para el nombre del usuario */
+.user-info .user-name {
+  font-size: 1.2rem; /* Aumenta el tamaño del texto */
+  font-weight: bold; /* Hace que resalte más */
+  color: #ffcc00; /* Puedes cambiar el color si quieres resaltar más */
+}
+
+/* Estilos generales para wallet y score */
+.user-info .wallet,
+.user-info .score {
+  font-size: 1rem; /* Mantiene el tamaño estándar */
+  font-weight: normal;
+}
+
+.user-info {
+  width: 120px; /* Misma anchura que la tienda */
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin-right: 5rem; /* Mueve el cuadro del usuario más hacia el centro */
+}
+
+/* Imagen de la tienda */
+.store-image {
+  width: 120px; /* Tamaño fijo */
+  height: auto;
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 5px;
+}
+
+.store-image:hover {
+  opacity: 0.8;
+}
+
+/* Contenedor de la información del usuario */
+.user-info {
+  width: 120px; /* Misma anchura que la tienda */
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+/* Espaciado entre elementos del usuario */
+.user-info span {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* Contenido principal centrado */
+.hangar-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* Centra horizontal */
+  justify-content: center; /* Centra vertical si quieres, ojo con la altura */
+  margin-top: 4rem;     /* Baja un poco el contenido para no chocar con la cabecera */
+  padding: 2rem 1rem;   /* Espacio interno */
+  text-align: center;
+  color: #fff;
+}
+
+/* Contenedor del título (imagen) */
+.hangar-title-container {
+  position: absolute;
+  top: -5rem; /* Alineado con la tienda y el usuario */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+}
+
+/* Imagen del título */
+.hangar-title {
+  width: 300px; /* Ajusta según el tamaño de la imagen */
+  height: auto;
+  background-color: rgba(255, 255, 255, 0.6);
+  object-fit: contain;
+}
+
+/* Mensaje cuando no hay aviones */
+.no-planes-message {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  max-width: 80%;
+  margin: 1rem auto; /* para centrar si es block */
+}
+
+/* Contenedor de las cards de aviones */
+.planes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem; /* Espaciado entre aviones */
+  justify-content: center;
+  max-width: 1300px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+/* Estilos de las tarjetas de los aviones */
+.plane-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  color: black; /* Texto en negro */
+  padding: 1rem;
+  border-radius: 10px;
+  width: 240px; /* Doble del tamaño de la tienda */
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.plane-card:hover {
+  transform: scale(1.05);
+}
+
+/* Imagen de los aviones */
+.plane-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Nombre del avión */
+.plane-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000; /* Texto negro */
+  margin-top: 0.5rem;
+}
+
+/* Contenedor de estadísticas */
+.plane-stats {
+  width: 100%;
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+/* Barra de estado (vida y combustible) */
+.stat-bar {
+  height: 8px;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+
+/* Texto de estadísticas (en negro) */
+.stat-text {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #000; /* Texto negro */
+  margin-top: 2px;
+}
+
+/* Controles de los aviones */
+.plane-actions {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 0.8rem;
+}
+
+.plane-actions button {
+  background-color: #1e90ff;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.plane-actions button:hover {
+  background-color: #1c86ee;
+}
