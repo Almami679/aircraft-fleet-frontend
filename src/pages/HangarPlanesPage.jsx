@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { videoMap } from '../constants/videoMap';
-import { getPlaneImage } from '../constants/planeMap';
 import PlaneCard from '../components/PlaneCard';
 import './HangarPlanesPage.css';
 
@@ -10,20 +9,27 @@ const HangarPlanesPage = () => {
   const navigate = useNavigate();
 
   // Datos del usuario
-  const [userName, setUserName] = useState('');
-  const [wallet, setWallet] = useState(0);
-  const [score, setScore] = useState(0);
+  const [userData, setUserData] = useState({
+    userName: '',
+    wallet: 0,
+    score: 0,
+    planes: []
+  });
 
-  // Datos del hangar
-  const [timeOfDay, setTimeOfDay] = useState(null);
-  const [weather, setWeather] = useState(null);
-  const [planes, setPlanes] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Error (si ocurre)
   const [error, setError] = useState('');
 
-  // 🔹 **Función para obtener datos del usuario y su hangar**
+  // Estado para la hora del día y clima del hangar
+  const [timeOfDay, setTimeOfDay] = useState(null);
+
+  // Mapeo de iconos de clima
+  const weatherIcons = {
+    DESPEJADO: '☀️',
+    NUBLADO: '☁️',
+    TORMENTA: '⛈️'
+  };
+
+  // 🔹 **Función para obtener datos completos del usuario y su hangar**
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -38,16 +44,15 @@ const HangarPlanesPage = () => {
 
       const data = response.data;
 
-      setUserName(data.userName || '');
-      setWallet(data.wallet || 0);
-      setScore(data.score || 0);
+      setUserData({
+        userName: data.userName || '',
+        wallet: data.wallet || 0,
+        score: data.score || 0,
+        planes: data.hangar?.planes || []
+      });
 
       if (data.hangar) {
-        setTimeOfDay(data.hangar.timeOfDay);
-        setWeather(data.hangar.weather);
-        setPlanes(data.hangar.planes || []);
-      } else {
-        setPlanes([]);
+        setTimeOfDay(data.hangar.timeOfDay); // 🔹 Solo guardamos la hora del día
       }
 
       setLoading(false);
@@ -63,136 +68,90 @@ const HangarPlanesPage = () => {
     fetchUserData();
   }, []);
 
-  // 🔹 **Acciones sobre los aviones**
-  const handleRepair = async (planeId) => {
+  // 🔹 **Acción para actualizar solo los aviones Y el wallet después de reparar/repostar**
+  const updatePlaneState = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/auth/login');
-        return;
-      }
-      await axios.post(`/aircraft/hangar/repair/${planeId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchUserData(); // Recargar datos después de la acción
+      fetchUserData(); // 🔹 Recargar TODO (wallet y aviones)
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Error al reparar el avión.');
-    }
-  };
-
-  const handleRefuel = async (planeId) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/auth/login');
-        return;
-      }
-      await axios.post(`/aircraft/hangar/refuel/${planeId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchUserData();
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Error al repostar el avión.');
-    }
-  };
-
-  const handleBattle = async (planeId) => {
-    try {
-      console.log('Ir a batalla con avión ID:', planeId);
-      // navigate(`/battle/${planeId}`);
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Error al iniciar la batalla.');
+      console.error("Error al actualizar estado del avión:", err);
     }
   };
 
   // 🔹 **Normalizar valores solo si están definidos**
   const normalizedTimeOfDay = timeOfDay ? timeOfDay.trim().toUpperCase() : "DAY";
-  const normalizedWeather = weather ? weather.trim().toUpperCase() : "CLEAR";
 
-  // 🔹 **Seleccionar el video de fondo según el clima y la hora del día**
+  // 🔹 **Seleccionar el video de fondo según `videoMap`**
   const backgroundVideo = useMemo(() => {
-    if (!videoMap[normalizedTimeOfDay]) {
-      console.warn(`⚠️ No se encontró '${normalizedTimeOfDay}' en videoMap.`);
-    }
-    if (!videoMap[normalizedTimeOfDay]?.[normalizedWeather]) {
-      console.warn(`⚠️ No se encontró '${normalizedWeather}' para '${normalizedTimeOfDay}' en videoMap.`);
-    }
+    // 🔹 Seleccionar aleatoriamente un clima del mapa si está disponible
+    const availableWeathers = Object.keys(videoMap[normalizedTimeOfDay] || {});
+    const randomWeather = availableWeathers[Math.floor(Math.random() * availableWeathers.length)] || "DESPEJADO";
+    return videoMap[normalizedTimeOfDay]?.[randomWeather] || '/hangarStatus/day-clear.MOV';
+  }, [normalizedTimeOfDay]);
 
-    return videoMap[normalizedTimeOfDay]?.[normalizedWeather] || '/hangarStatus/day-clear.MOV';
-  }, [normalizedTimeOfDay, normalizedWeather]);
+  // 🔹 **Obtener el clima mostrado en pantalla a partir del video de fondo**
+  const displayedWeather = useMemo(() => {
+    return Object.keys(videoMap[normalizedTimeOfDay] || {}).find(
+      key => videoMap[normalizedTimeOfDay][key] === backgroundVideo
+    ) || "DESCONOCIDO";
+  }, [backgroundVideo]);
 
   console.log("🎥 Video seleccionado:", backgroundVideo);
+  console.log("🌦️ Clima visualizado según video:", displayedWeather);
 
-  // 🔹 **Esperar a que se carguen los datos antes de renderizar**
   if (loading) {
     console.warn("⏳ Esperando datos del hangar...");
     return <p>Cargando hangar...</p>;
   }
 
   return (
-      <div className="hangar-page">
-        {/* Video de fondo */}
-        <video autoPlay loop muted className="background-video">
-          <source src={backgroundVideo} type="video/mp4" />
-          Tu navegador no soporta el elemento <code>video</code>.
-        </video>
+    <div className="hangar-page">
+      {/* Video de fondo */}
+      <video autoPlay loop muted className="background-video">
+        <source src={backgroundVideo} type="video/mp4" />
+        Tu navegador no soporta el elemento <code>video</code>.
+      </video>
 
-        {/* Cabecera fija */}
-        <div className="hangar-header">
-          <img
-            className="store-image"
-            src="/images/imagenesfront/storeIcon.PNG"
-            alt="Store"
-            onClick={() => navigate('/store/planes')}
-          />
+      {/* Cabecera fija */}
+      <div className="hangar-header">
+        <img
+          className="store-image"
+          src="/images/imagenesfront/storeIcon.PNG"
+          alt="Store"
+          onClick={() => navigate('/store/planes')}
+        />
 
-          {/* Imagen del título (centrado) */}
-          <div className="hangar-title-container">
-            <img
-              src="/images/imagenesfront/tituloHangar.png"
-              alt="Hangar"
-              className="hangar-title"
-            />
-          </div>
-
-          <div className="user-info">
-            <span className="user-name">{userName}</span>
-            <span className="wallet">💰 : {wallet}</span>
-            <span className="score">🏆 : {score}</span>
-          </div>
+        {/* Casillero de clima basado en `videoMap` */}
+        <div className="weather-box">
+          <span>Clima: {weatherIcons[displayedWeather] || '❓'} {displayedWeather}</span>
         </div>
 
-        {/* Contenido de los aviones con scroll independiente */}
-        <div className="hangar-content">
-          {planes.length === 0 ? (
-            <div className="no-planes-message">
-              <p>No tienes aviones en tu hangar</p>
-            </div>
-          ) : (
-            <div className="planes-container">
-              {planes.map((plane) => (
-                <PlaneCard
-                  key={plane.id}
-                  plane={plane}
-                  handleRepair={handleRepair}
-                  handleRefuel={handleRefuel}
-                  handleBattle={handleBattle}
-                  fetchUserData={fetchUserData}
-                />
-              ))}
-            </div>
-          )}
+        <div className="user-info">
+          <span className="user-name">{userData.userName}</span>
+          <span className="wallet">💰 : {userData.wallet}</span>
+          <span className="score">🏆 : {userData.score}</span>
         </div>
-      </div> // 🔹 **Cierre correcto de `<div className="hangar-page">`**
-    );
-  };
+      </div>
 
-  export default HangarPlanesPage;
+      {/* Contenido de los aviones con scroll independiente */}
+      <div className="hangar-content">
+        {userData.planes.length === 0 ? (
+          <div className="no-planes-message">
+            <p>No tienes aviones en tu hangar</p>
+          </div>
+        ) : (
+          <div className="planes-container">
+            {userData.planes.map((plane) => (
+              <PlaneCard
+                key={plane.id}
+                plane={plane}
+                fetchUserData={updatePlaneState} // 🔹 Ahora actualiza también el wallet
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-
-
-
-
+export default HangarPlanesPage;

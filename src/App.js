@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HangarPlanesPage from './pages/HangarPlanesPage';
 import StorePage from './pages/StorePage';
+import Battle from './pages/Battle';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         {/* Ruta absoluta con /aircraft/hangar/planes */}
         <Route path="/aircraft/hangar/user" element={<HangarPlanesPage />} />
         <Route path="/aircraft/store/planes" element={<StorePage />} />
+        <Route path="/battle" element={<Battle />} />
       </Routes>
     </Router>
   );

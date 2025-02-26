@@ -1,6 +1,6 @@
 // src/constants/planeMap.js
 
-// Mapeo de imágenes de aviones
+// Mapeo de imágenes de aviones base
 const planeImages = {
   "Spitfire": "/images/imagenesfront/avionesapi/Spitfire.PNG",
   "Messerschmitt Bf 109": "/images/imagenesfront/avionesapi/Messerschmitt.PNG",
@@ -10,30 +10,38 @@ const planeImages = {
   "Yakovlev Yak-3": "/images/imagenesfront/avionesapi/YAK_3.PNG"
 };
 
-// Mapeo de imágenes según accesorio equipado
+// Mapeo de imágenes de accesorios **con nombres exactamente como en el backend**
 const accessoryImages = {
   "MG 42": "-MG42.PNG",
-  "Cañón 20mm Hispano": "-cannon.PNG",
-  "Cohete V2 Alemán": "-misile.PNG",
+  "Cañon 20mm Hispano": "-cannon.PNG",
+  "Misil V2 Aleman": "-misile.PNG",
   "Blindaje Ligero": "-blindado.PNG",
   "Blindaje Medio": "-blindado.PNG",
   "Blindaje Pesado": "-blindado.PNG"
 };
 
-// Función para obtener la imagen correcta del avión según su accesorio equipado
-export function getPlaneImage(plane) { // <-- Asegurar la exportación
-  let baseImage = planeImages[plane.name]; // Imagen por defecto si no se encuentra
-  if (!baseImage) {
-    console.warn(`No se encontró imagen para el avión: ${plane.name}`);
-    return "/images/default-plane.png"; // Imagen por defecto si el avión no está en el listado
-  }
+// ✅ Función para obtener la imagen correcta del avión con su accesorio equipado
+export function getPlaneImage(plane) {
+  let baseImage = planeImages[plane.name] || "/images/default-plane.png";
 
-  if (plane.equippedAccessory) {
-    const accessorySuffix = accessoryImages[plane.equippedAccessory.name];
+  if (plane.equippedAccessory && plane.equippedAccessory.name) {
+    // 🔹 Normalizamos el nombre para evitar problemas de acentos y espacios extra
+    let normalizedAccessory = plane.equippedAccessory.name
+      .trim()
+      .replace(/\s+/g, " ") // 🔹 Eliminar espacios extra entre palabras
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // 🔹 Eliminar tildes (ej. "Alemán" -> "Aleman")
+
+    // 🔹 Buscamos en el mapeo de accesorios con la versión normalizada
+    const accessorySuffix = accessoryImages[normalizedAccessory];
+
     if (accessorySuffix) {
+      console.log(`✅ Accesorio detectado: ${normalizedAccessory} -> Asignando imagen: ${accessorySuffix}`);
       baseImage = baseImage.replace(".PNG", accessorySuffix);
+    } else {
+      console.warn(`⚠️ No se encontró imagen para accesorio: ${normalizedAccessory}`);
     }
   }
+
   return baseImage;
 }
 

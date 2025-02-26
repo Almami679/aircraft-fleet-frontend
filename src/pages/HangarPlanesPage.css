@@ -1,4 +1,3 @@
-
 .hangar-page {
   position: relative;
   height: 100vh; /* Ocupa toda la altura de la pantalla */
@@ -24,13 +23,13 @@
   max-height: 60vh; /* Ajusta esto según la necesidad */
   padding: 10px;
 }
+
 /* Contenedor principal que ocupa toda la pantalla */
 .hangar-container {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
-
 }
 
 /* Video de fondo a pantalla completa */
@@ -47,7 +46,7 @@
   object-fit: cover; /* Para mantener proporciones (si tu video lo permite) */
 }
 
-/* Contenedor de la cabecera (incluye tienda, título y datos del usuario) */
+/* Contenedor de la cabecera (incluye tienda y datos del usuario) */
 .hangar-header {
   position: absolute;
   top: 1rem;
@@ -59,7 +58,6 @@
   padding: 0 2rem;
   z-index: 10; /* Asegura que siempre esté encima del scroll */
 }
-
 
 /* Estilo específico para el nombre del usuario */
 .user-info .user-name {
@@ -101,16 +99,66 @@
   opacity: 0.8;
 }
 
-/* Contenedor de la información del usuario */
+/* 🏆 Contenedor de la información del usuario */
 .user-info {
-  width: 120px; /* Misma anchura que la tienda */
   display: flex;
   flex-direction: column;
   text-align: right;
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.6);
-  padding: 0.5rem;
-  border-radius: 10px;
+  color: #fff; /* Letras blancas para contraste */
+  background: linear-gradient(135deg, rgba(0, 183, 255, 0.8), rgba(0, 123, 255, 0.6)); /* Degradado azul neón */
+  padding: 1rem;
+  border-radius: 12px;
+  width: 120px; /* Aumentamos un poco el tamaño */
+  height: auto;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 183, 255, 0.6); /* Glow suave */
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: "Orbitron", sans-serif; /* Fuente futurista */
+  letter-spacing: 1px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 🌀 Efecto al pasar el mouse */
+.user-info:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 6px 14px rgba(0, 183, 255, 0.9); /* Aumentamos el glow */
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* 🌟 Estilos para el nombre del usuario */
+.user-info .user-name {
+  font-size: 1rem;
+  font-weight: bold;
+  text-shadow: 0px 2px 6px rgba(255, 255, 255, 0.8);
+}
+
+/* 💰 Estilo para el dinero y score */
+.user-info .wallet,
+.user-info .score {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #f4f4f4;
+  text-shadow: 0px 2px 6px rgba(0, 255, 204, 0.8);
+}
+
+/* ✨ Brillo animado */
+@keyframes glowEffect {
+  0% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+  50% { box-shadow: 0px 0px 12px rgba(0, 183, 255, 1); }
+  100% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+}
+
+.user-info {
+  animation: glowEffect 1.5s infinite alternate;
+}
+
+
+/* ✨ Efecto al hacer clic */
+.user-info:active {
+  transform: scale(0.95);
+  filter: drop-shadow(0px 3px 6px rgba(0, 183, 255, 0.8));
 }
 
 /* Espaciado entre elementos del usuario */
@@ -127,31 +175,50 @@
   flex-direction: column;
   align-items: center;   /* Centra horizontal */
   justify-content: center; /* Centra vertical si quieres, ojo con la altura */
-  margin-top: 4rem;     /* Baja un poco el contenido para no chocar con la cabecera */
+  margin-top: -1rem;     /* a negativos sube el contenedor aviones */
   padding: 2rem 1rem;   /* Espacio interno */
   text-align: center;
   color: #fff;
 }
-
-/* Contenedor del título (imagen) */
-.hangar-title-container {
+/* 🌦️ Casillero de clima con efecto futurista */
+.weather-box {
   position: absolute;
-  top: -5rem; /* Alineado con la tienda y el usuario */
+  top: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: auto;
+  background: linear-gradient(135deg, rgba(0, 183, 255, 0.8), rgba(0, 123, 255, 0.6)); /* Degradado azul */
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff; /* Letras blancas */
+  text-align: center;
+  font-family: "Orbitron", sans-serif; /* Fuente futurista */
+  letter-spacing: 1px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  cursor: default;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 183, 255, 0.6); /* Glow azul */
 }
 
-/* Imagen del título */
-.hangar-title {
-  width: 300px; /* Ajusta según el tamaño de la imagen */
-  height: auto;
-  background-color: rgba(255, 255, 255, 0.6);
-  object-fit: contain;
+/* 🔥 Efecto hover */
+.weather-box:hover {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0px 6px 14px rgba(0, 183, 255, 0.9); /* Glow más intenso */
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
+
+/* 💡 Animación de brillo */
+@keyframes glowWeather {
+  0% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+  50% { box-shadow: 0px 0px 12px rgba(0, 183, 255, 1); }
+  100% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+}
+
+.weather-box {
+  animation: glowWeather 1.5s infinite alternate;
+}
+
 
 /* Mensaje cuando no hay aviones */
 .no-planes-message {
@@ -169,11 +236,15 @@
   flex-wrap: wrap;
   gap: 1.5rem; /* Espaciado entre aviones */
   justify-content: center;
-  max-width: 1300px;
-  margin: 2rem auto;
-  padding: 1rem;
+  max-width: 2300px;
+  margin: 1rem auto;
+  padding: 1rem 1rem 5rem;
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 10px;
+  height: calc(100% + 50%); /* Un tercio más alto */
+  transition: all 0.3s ease-in-out;
+  filter: drop-shadow(0px 4px 8px rgba(0, 183, 255, 0.5)); /* Efecto de sombra azul */
+
 }
 
 /* Estilos de las tarjetas de los aviones */
@@ -224,7 +295,6 @@
   transition: width 0.3s ease-in-out;
 }
 
-
 /* Texto de estadísticas (en negro) */
 .stat-text {
   font-size: 0.9rem;
@@ -252,4 +322,41 @@
 
 .plane-actions button:hover {
   background-color: #1c86ee;
+}
+/* 🛒 Estilo para el botón de la tienda de aviones */
+.store-image {
+  width: 110px; /* Tamaño fijo */
+  height: auto;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  background: linear-gradient(135deg, rgba(0, 183, 255, 0.8), rgba(0, 123, 255, 0.6)); /* Mismo degradado azul */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 183, 255, 0.6); /* Glow azul inicial */
+  filter: drop-shadow(0px 4px 8px rgba(0, 183, 255, 0.5)); /* Efecto de sombra */
+  }
+
+  /* 🔥 Efecto hover */
+  .store-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 14px rgba(0, 183, 255, 0.9); /* Glow más fuerte */
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+
+  /* 💡 Animación de brillo */
+  @keyframes glowStore {
+    0% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+    50% { box-shadow: 0px 0px 12px rgba(0, 183, 255, 1); }
+    100% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+  }
+
+  .store-image {
+    animation: glowStore 1.5s infinite alternate;
+  }
+
+/* ✨ Efecto al hacer clic */
+.store-image:active {
+  transform: scale(0.95);
+  filter: drop-shadow(0px 3px 6px rgba(0, 183, 255, 0.8));
 }
