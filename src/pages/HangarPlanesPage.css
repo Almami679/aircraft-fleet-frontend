@@ -175,9 +175,11 @@
   flex-direction: column;
   align-items: center;   /* Centra horizontal */
   justify-content: center; /* Centra vertical si quieres, ojo con la altura */
-  margin-top: -1rem;     /* a negativos sube el contenedor aviones */
+  margin-top: -6rem;     /* a negativos sube el contenedor aviones */
   padding: 2rem 1rem;   /* Espacio interno */
   text-align: center;
+  max-height: none;
+  overflow: visible;
   color: #fff;
 }
 /* 🌦️ Casillero de clima con efecto futurista */
@@ -185,9 +187,10 @@
   position: absolute;
   top: 1rem;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% - 2.5rem));
   background: linear-gradient(135deg, rgba(0, 183, 255, 0.8), rgba(0, 123, 255, 0.6)); /* Degradado azul */
   padding: 0.8rem 1.2rem;
+   margin-top: -1rem;
   border-radius: 12px;
   font-size: 1.1rem;
   font-weight: bold;
@@ -241,10 +244,17 @@
   padding: 1rem 1rem 5rem;
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 10px;
-  height: calc(100% + 50%); /* Un tercio más alto */
+  /*height: calc(100% + 50%); /* Un tercio más alto */
+  max-height: none;
+  overflow: visible;
   transition: all 0.3s ease-in-out;
   filter: drop-shadow(0px 4px 8px rgba(0, 183, 255, 0.5)); /* Efecto de sombra azul */
 
+}
+
+.planes-container:only-child {
+  overflow: hidden;
+  max-height: none;
 }
 
 /* Estilos de las tarjetas de los aviones */

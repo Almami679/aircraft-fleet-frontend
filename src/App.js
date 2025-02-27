@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import HangarPlanesPage from './pages/HangarPlanesPage';
 import StorePage from './pages/StorePage';
 import Battle from './pages/Battle';
+import BattleSimulationPage from './pages/BattleSimulationPage'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/aircraft/hangar/user" element={<HangarPlanesPage />} />
         <Route path="/aircraft/store/planes" element={<StorePage />} />
         <Route path="/battle" element={<Battle />} />
+        <Route path="/battle-simulation" element={<BattleSimulationPage />} />
       </Routes>
     </Router>
   );

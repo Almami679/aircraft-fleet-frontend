@@ -5,7 +5,7 @@ import { getPlaneImage } from "../constants/planeMap";
 import { accessoryMap } from "../constants/accessoryMap"; // ✅ Importamos el map de accesorios
 import "./PlaneCard.css";
 
-const PlaneCard = ({ plane, fetchUserData, isOpponent = false }) => {
+const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPlane, opponentData }) => {
   const navigate = useNavigate();
 
   const [accessories, setAccessories] = useState([]);
@@ -15,35 +15,39 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false }) => {
   const [updatingPlane, setUpdatingPlane] = useState(false);
   const [currentPlane, setCurrentPlane] = useState(plane);
 
+
   useEffect(() => {
-    setCurrentPlane(plane);
+      setCurrentPlane(plane);
   }, [plane]);
 
   useEffect(() => {
-    const fetchAccessories = async () => {
-      setLoadingAccessories(true);
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
+      const fetchAccessories = async () => {
+          setLoadingAccessories(true);
+          try {
+              const token = localStorage.getItem("token");
+              if (!token) return;
 
-        const response = await axios.get("/aircraft/store/accessories", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+              const response = await axios.get("/aircraft/store/accessories", {
+                  headers: { Authorization: `Bearer ${token}` },
+              });
 
-        if (response.status === 200) {
-          setAccessories(response.data);
-        }
-      } catch (error) {
-        console.error("❌ Error al obtener accesorios:", error);
-      } finally {
-        setLoadingAccessories(false);
+              if (response.status === 200) {
+                  setAccessories(response.data);
+              }
+          } catch (error) {
+              console.error("❌ Error al obtener accesorios:", error);
+          } finally {
+              setLoadingAccessories(false);
+          }
+      };
+
+      if (!isOpponent) {
+          fetchAccessories();
       }
-    };
-
-    if (!isOpponent) {
-      fetchAccessories();
-    }
   }, [isOpponent]);
+
+  // ✅ Solo corregimos la parte que causaba errores de compilación
+
 
   // ✅ Función para ejecutar acciones (reparar, repostar, vender)
   const handlePlaneAction = async (planeId, action) => {
@@ -108,14 +112,45 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false }) => {
 
   // ✅ Función para iniciar una batalla
   const handleBattle = () => {
-    console.log(`⚔️ Entrando en batalla con avión ID: ${plane.id}`);
-    navigate("/battle", { state: { selectedPlaneId: plane.id } });
+      if (!plane || !plane.id) {
+          console.error("❌ Error: No se encontró el avión para la batalla.");
+          alert("No se pudo iniciar la batalla. Verifica que tienes un avión seleccionado.");
+          return;
+      }
+
+      console.log("🚀 Guardando avión seleccionado para batalla:", plane);
+
+      // ✅ Guardar el avión seleccionado en localStorage
+      localStorage.setItem("selectedPlayerPlane", JSON.stringify(plane));
+
+      // ✅ Navegar a la página de batalla
+      navigate("/battle");
   };
 
-  // ✅ Función para aceptar la batalla (solo en oponentes)
-  const handleAcceptBattle = () => {
-    console.log(`⚔️ Aceptando batalla contra avión ID: ${plane.id}`);
-  };
+
+
+ // ✅ Función para aceptar la batalla y redirigir a BattleSimulator
+ const handleAcceptBattle = () => {
+     console.log("📌 Debug: Datos recibidos en PlaneCard.jsx");
+     console.log("🛩️ Avión seleccionado:", selectedPlayerPlane);
+     console.log("🎯 Oponente:", opponentData);
+
+     if (!selectedPlayerPlane || !opponentData) {
+       console.error("❌ Error: No hay avión seleccionado o no hay oponente.");
+       alert("Debe seleccionarse un avión y un oponente antes de iniciar la batalla.");
+       return;
+     }
+
+     console.log("🚀 Iniciando batalla con:", selectedPlayerPlane, "vs", opponentData);
+
+     // 🔹 Guardar datos en `localStorage` para BattleSimulationPage
+     localStorage.setItem("selectedPlayerPlane", JSON.stringify(selectedPlayerPlane));
+     localStorage.setItem("opponentData", JSON.stringify(opponentData));
+
+     // 🔹 Redirigir a `BattleSimulationPage`
+     navigate('/battle-simulation');
+ };
+
 
   // ✅ Función para retirarse (solo en oponentes)
   const handleRetreat = () => {
@@ -173,10 +208,10 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false }) => {
         {isOpponent ? (
           <>
             <button className="accept-battle" onClick={handleAcceptBattle}>
-              ✔️ Aceptar
+              ✔️ Aceptar batalla
             </button>
             <button className="retreat-button" onClick={handleRetreat}>
-              ✖️ Retirarse
+              ❌ Retirarse
             </button>
           </>
         ) : (
@@ -194,7 +229,6 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false }) => {
         )}
       </div>
 
-
       {/* ✅ Selector de accesorios (solo si NO es un oponente) */}
       {!isOpponent && (
         <div className="accessory-purchase">
@@ -204,7 +238,7 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false }) => {
             disabled={loadingAccessories}
           >
             <option value="default" disabled hidden>
-              🛠️ Equipar accesorio 🛠️
+              🛠️ Equipar accesorio
             </option>
             {accessories.map((acc) => (
               <option key={acc.name} value={acc.name}>

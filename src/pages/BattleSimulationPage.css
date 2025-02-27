@@ -1,0 +1,250 @@
+/* ✅ Estilos generales */
+.hangar-page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🎥 Video de fondo */
+.background-video {
+  position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 50%;
+    min-height: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    object-fit: cover; /* Para mantener proporciones (si tu video lo permite) */
+  }
+
+
+
+/* Contenedor de la cabecera (incluye tienda y datos del usuario) */
+.hangar-header {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* Espaciado máximo entre elementos */
+  align-items: center;
+  padding: 0 2rem;
+  z-index: 10; /* Asegura que siempre esté encima del scroll */
+}
+
+/* Estilo específico para el nombre del usuario */
+.user-info .user-name {
+  font-size: 1.2rem; /* Aumenta el tamaño del texto */
+  font-weight: bold; /* Hace que resalte más */
+  color: #ffcc00; /* Puedes cambiar el color si quieres resaltar más */
+}
+
+/* Estilos generales para wallet y score */
+.user-info .wallet,
+.user-info .score {
+  font-size: 1rem; /* Mantiene el tamaño estándar */
+  font-weight: normal;
+}
+
+.user-info {
+  width: 120px; /* Misma anchura que la tienda */
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin-right: 5rem; /* Mueve el cuadro del usuario más hacia el centro */
+}
+
+/* Imagen de la tienda */
+.store-image {
+  width: 120px; /* Tamaño fijo */
+  height: auto;
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 5px;
+}
+
+.store-image:hover {
+  opacity: 0.8;
+}
+
+/* 🏆 Contenedor de la información del usuario */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  color: #fff; /* Letras blancas para contraste */
+  background: linear-gradient(135deg, rgba(0, 183, 255, 0.8), rgba(0, 123, 255, 0.6)); /* Degradado azul neón */
+  padding: 1rem;
+  border-radius: 12px;
+  width: 120px; /* Aumentamos un poco el tamaño */
+  height: auto;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 183, 255, 0.6); /* Glow suave */
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: "Orbitron", sans-serif; /* Fuente futurista */
+  letter-spacing: 1px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 🌀 Efecto al pasar el mouse */
+.user-info:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 6px 14px rgba(0, 183, 255, 0.9); /* Aumentamos el glow */
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* 🌟 Estilos para el nombre del usuario */
+.user-info .user-name {
+  font-size: 1rem;
+  font-weight: bold;
+  text-shadow: 0px 2px 6px rgba(255, 255, 255, 0.8);
+}
+
+/* 💰 Estilo para el dinero y score */
+.user-info .wallet,
+.user-info .score {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #f4f4f4;
+  text-shadow: 0px 2px 6px rgba(0, 255, 204, 0.8);
+}
+
+/* ✨ Brillo animado */
+@keyframes glowEffect {
+  0% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+  50% { box-shadow: 0px 0px 12px rgba(0, 183, 255, 1); }
+  100% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+}
+
+.user-info {
+  animation: glowEffect 1.5s infinite alternate;
+}
+
+
+/* ✨ Efecto al hacer clic */
+.user-info:active {
+  transform: scale(0.95);
+  filter: drop-shadow(0px 3px 6px rgba(0, 183, 255, 0.8));
+}
+
+/* Espaciado entre elementos del usuario */
+.user-info span {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+
+/* 🌦️ Casillero de clima con efecto futurista */
+.weather-box {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(calc(-50% - 2.5rem));
+  background: linear-gradient(135deg, rgba(0, 183, 255, 0.8), rgba(0, 123, 255, 0.6)); /* Degradado azul */
+  padding: 0.8rem 1.2rem;
+   margin-top: -1rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff; /* Letras blancas */
+  text-align: center;
+  font-family: "Orbitron", sans-serif; /* Fuente futurista */
+  letter-spacing: 1px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  cursor: default;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 183, 255, 0.6); /* Glow azul */
+}
+
+/* 🔥 Efecto hover */
+.weather-box:hover {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0px 6px 14px rgba(0, 183, 255, 0.9); /* Glow más intenso */
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* 💡 Animación de brillo */
+@keyframes glowWeather {
+  0% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+  50% { box-shadow: 0px 0px 12px rgba(0, 183, 255, 1); }
+  100% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+}
+
+.weather-box {
+  animation: glowWeather 1.5s infinite alternate;
+}
+
+
+/* 🏆 Contenedor de resultado de la batalla */
+.battle-result-container {
+  position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* Centra horizontal */
+    justify-content: center; /* Centra vertical si quieres, ojo con la altura */
+    margin-top: -6rem;     /* a negativos sube el contenedor aviones */
+    padding: 2rem 1rem;   /* Espacio interno */
+    text-align: center;
+    max-height: none;
+    overflow: visible;
+    color: #fff;
+  }
+
+.battle-result-container h2 {
+  font-size: 1.8rem;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.battle-result-container p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* 🔙 Botón de volver */
+.return-button {
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.return-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+
+/* ⏳ Cargando batalla */
+.error-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+}
