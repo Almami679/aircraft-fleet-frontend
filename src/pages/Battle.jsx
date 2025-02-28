@@ -36,6 +36,37 @@ const Battle = () => {
   // ✅ Obtener el token desde localStorage
   const getToken = () => localStorage.getItem('token');
 
+  useEffect(() => {
+      const fetchUserData = async () => {
+        const token = getToken();
+        if (!token) {
+          navigate("/auth/login");
+          return;
+        }
+
+        try {
+          const response = await axios.get("/aircraft/hangar/user", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (response.status === 200) {
+            const data = response.data;
+            console.log("✅ Datos del usuario obtenidos:", data);
+            setUserData({
+              userName: data.userName || "",
+              wallet: data.wallet || 0,
+              score: data.score || 0,
+            });
+            setTimeOfDay(data.hangar?.timeOfDay || "DAY");
+          }
+        } catch (err) {
+          console.error("❌ Error al obtener datos del usuario:", err);
+        }
+      };
+
+      fetchUserData();
+    }, [navigate]);
+
   // Comprobar id de avion guardado
   useEffect(() => {
       const storedPlayerPlane = localStorage.getItem("selectedPlayerPlane");
@@ -116,6 +147,7 @@ const Battle = () => {
   }, []);
 
 
+
   // 🔹 **Normalizar valores solo si están definidos**
   const normalizedTimeOfDay = timeOfDay ? timeOfDay.trim().toUpperCase() : "DAY";
 
@@ -158,7 +190,7 @@ const Battle = () => {
           className="store-image"
           src="/images/imagenesfront/storeIcon.PNG"
           alt="Store"
-          onClick={() => navigate('/store/planes')}
+          onClick={() => navigate('/aircraft/store/planes')}
         />
 
         {/* 🔹 Casillero de clima basado en `videoMap` */}

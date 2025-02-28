@@ -1,15 +1,14 @@
 // src/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../services/authService'; // Tu servicio de login
+import { login } from '../services/authService'; // ✅ Servicio de login
 import './LoginPage.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  // Usamos [username, setUsername] para el usuario
+  // Estado para usuario y contraseña
   const [username, setUsername] = useState('');
-  // Usamos [password, setPassword] para la contraseña
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
@@ -19,26 +18,33 @@ const LoginPage = () => {
 
     try {
       const response = await login(username, password);
-        console.log('DEBUG - Login exitoso:', response.data);
+      console.log('✅ DEBUG - Login exitoso:', response.data);
 
-        // Suponiendo que el backend retorna { token, userName, role }
-        const { token, userName, role } = response.data;
+      // 🔹 Extraemos los datos recibidos del backend
+      const { token, userName, role } = response.data;
 
-        // Guarda el token en localStorage (o Context, Redux, etc.)
-        localStorage.setItem('token', token);
-        localStorage.setItem('userName', userName);
-        localStorage.setItem('role', role);
+      // 🔹 Guardamos los datos en localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('role', role);
 
-        // Redirige a /aircraft/hangar/planes
-        navigate('/aircraft/hangar/user');
+      console.log("🔹 Rol del usuario logueado:", role);
+
+      // 🔹 Redirigir según el rol
+      if (role === "ADMIN") {
+        navigate("/aircraft/hangar/AllPlanes"); // ✅ Admins van a la gestión de aviones
+      } else {
+        navigate("/aircraft/hangar/user"); // ✅ Usuarios normales van a su hangar
+      }
     } catch (err) {
-      // Mostramos el mensaje de error del backend o uno genérico
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      console.error("❌ Error en el login:", err);
+      setError(err.response?.data?.message || "⚠️ Error al iniciar sesión");
     }
   };
 
   return (
     <div className="login-container">
+      {/* ✅ Video de fondo */}
       <video autoPlay loop muted className="background-video">
         <source src="/video.mp4" type="video/mp4" />
         Tu navegador no soporta videos en HTML5.

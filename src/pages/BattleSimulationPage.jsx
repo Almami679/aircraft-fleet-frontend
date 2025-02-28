@@ -1,23 +1,27 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import PlaneCard from "../components/PlaneCard";
 import "./BattleSimulationPage.css";
+import PlaneCardWinner from "../components/PlaneCardWinner"; // ✅ Importamos el nuevo componente
+
 
 const BattleSimulationPage = () => {
   const navigate = useNavigate();
 
   // Estados
   const [userData, setUserData] = useState({
-    userName: '',
+    userName: "",
     wallet: 0,
     score: 0,
   });
-  const [playerPlaneId, setPlayerPlaneId] = useState(null);
+  const [playerPlane, setPlayerPlane] = useState(null);
   const [opponentData, setOpponentData] = useState(null);
   const [battleResult, setBattleResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [timeOfDay, setTimeOfDay] = useState(null);
+  const [showWinner, setShowWinner] = useState(false); // Estado para mostrar resultado tras el video
 
   // 🔹 Mapeo de iconos de clima
   const weatherIcons = {
@@ -40,28 +44,28 @@ const BattleSimulationPage = () => {
       return;
     }
 
-    const playerPlane = JSON.parse(storedPlayerPlane);
-    const opponent = JSON.parse(storedOpponent);
+    const playerPlaneParsed = JSON.parse(storedPlayerPlane);
+    const opponentParsed = JSON.parse(storedOpponent);
 
-    console.log("✅ Debug - Avión del jugador:", playerPlane);
-    console.log("✅ Debug - Oponente:", opponent);
+    console.log("✅ Debug - Avión del jugador:", playerPlaneParsed);
+    console.log("✅ Debug - Oponente:", opponentParsed);
 
-    if (!playerPlane?.id) {
+    if (!playerPlaneParsed?.id) {
       console.error("❌ Error: ID del avión del jugador es undefined.");
       setError("No se pudo obtener el avión del jugador.");
       setLoading(false);
       return;
     }
 
-    if (!opponent) {
+    if (!opponentParsed) {
       console.error("❌ Error: No se obtuvo el oponente.");
       setError("No se pudo obtener el oponente.");
       setLoading(false);
       return;
     }
 
-    setPlayerPlaneId(playerPlane.id);
-    setOpponentData(opponent);
+    setPlayerPlane(playerPlaneParsed);
+    setOpponentData(opponentParsed);
   }, []);
 
   // ✅ Cargar datos del usuario y el clima
@@ -98,20 +102,20 @@ const BattleSimulationPage = () => {
 
   // ✅ Iniciar batalla solo si los datos son válidos
   useEffect(() => {
-    if (!playerPlaneId || !opponentData) return;
+    if (!playerPlane || !opponentData) return;
 
     const startBattle = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = getToken();
         if (!token) {
           navigate("/auth/login");
           return;
         }
 
-        console.log("🚀 Enviando datos a backend: ", playerPlaneId, opponentData);
+        console.log("🚀 Enviando datos a backend: ", playerPlane.id, opponentData);
 
         const response = await axios.post(
-          `/aircraft/battles/start/${playerPlaneId}`,
+          `/aircraft/battles/start/${playerPlane.id}`,
           opponentData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -119,6 +123,11 @@ const BattleSimulationPage = () => {
         if (response.status === 200) {
           console.log("🏆 Batalla iniciada:", response.data);
           setBattleResult(response.data);
+
+          // ⏳ Esperar 5 segundos antes de mostrar el resultado
+          setTimeout(() => {
+            setShowWinner(true);
+          }, 6800);
         }
       } catch (err) {
         console.error("❌ Error al iniciar la batalla:", err);
@@ -129,10 +138,14 @@ const BattleSimulationPage = () => {
     };
 
     startBattle();
-  }, [playerPlaneId, opponentData, navigate]);
+  }, [playerPlane, opponentData, navigate]);
 
   if (loading) return <p>⏳ Simulando batalla...</p>;
   if (error) return <p className="error-box">{error}</p>;
+
+  // 🔹 Determinar si el usuario ganó o perdió
+  const userWon = battleResult?.winner?.username === userData.userName;
+  const winnerData = battleResult?.winner; // ✅ Avión del ganador
 
   return (
     <div className="hangar-page">
@@ -148,7 +161,7 @@ const BattleSimulationPage = () => {
           className="store-image"
           src="/images/imagenesfront/storeIcon.PNG"
           alt="Store"
-          onClick={() => navigate("/store/planes")}
+          onClick={() => navigate("/aircraft/store/planes")}
         />
 
         {/* 🔹 Casillero de clima basado en `videoMap` */}
@@ -165,9 +178,13 @@ const BattleSimulationPage = () => {
 
       {/* 🔹 Contenedor de batalla con video y resultado */}
       <div className="battle-content">
-        {battleResult ? (
+        {showWinner ? (
           <div className="battle-result-box">
-            <h2>🏆 ¡Ganador: {battleResult.winnerUsername}!</h2>
+            <h2>{userWon ? "🏆 ¡Has ganado!" : "💥 Tu avión ha sido destruido..."}</h2>
+
+            {/* ✅ Mostrar la tarjeta del avión ganador con estilo videojuego */}
+            <PlaneCardWinner plane={winnerData.plane} userWon={userWon} />
+
             <button onClick={() => navigate("/aircraft/hangar/user")} className="return-button">
               🔙 Volver al Hangar
             </button>

@@ -117,7 +117,7 @@ const HangarPlanesPage = () => {
           className="store-image"
           src="/images/imagenesfront/storeIcon.PNG"
           alt="Store"
-          onClick={() => navigate('/store/planes')}
+          onClick={() => navigate('/aircraft/store/planes')}
         />
 
         {/* Casillero de clima basado en `videoMap` */}
@@ -136,7 +136,8 @@ const HangarPlanesPage = () => {
       <div className="hangar-content">
         {userData.planes.length === 0 ? (
           <div className="no-planes-message">
-            <p>No tienes aviones en tu hangar</p>
+            <p>COMPRATE AVIONES</p>
+                <p>(o no tienes, o te los han destruido)</p>
           </div>
         ) : (
           <div className="planes-container">

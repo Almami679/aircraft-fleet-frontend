@@ -181,6 +181,7 @@
   max-height: none;
   overflow: visible;
   color: #fff;
+  transform: translateX(calc(-50% - 9rem));
 }
 /* 🌦️ Casillero de clima con efecto futurista */
 .weather-box {
@@ -225,13 +226,26 @@
 
 /* Mensaje cuando no hay aviones */
 .no-planes-message {
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  max-width: 80%;
-  margin: 1rem auto; /* para centrar si es block */
-}
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(calc(-50% - 2.5rem));
+     background: linear-gradient(135deg, rgba(220, 53, 69, 0.8), rgba(220, 53, 69, 0.6)); /* 🔥 Nuevo degradado en rojo */
+    padding: 0.8rem 1.2rem;
+     margin-top: -1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff; /* Letras blancas */
+    text-align: center;
+    font-family: "Orbitron", sans-serif; /* Fuente futurista */
+    letter-spacing: 1px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: default;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 183, 255, 0.6); /* Glow azul */
+  }
+
 
 /* Contenedor de las cards de aviones */
 .planes-container {

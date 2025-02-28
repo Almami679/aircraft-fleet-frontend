@@ -1,28 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { videoMap } from '../constants/videoMap';
-import PlaneCard from '../components/PlaneCard';
-import './HangarPlanesPage.css';
+import PlaneSell from '../components/PlaneSell';
+import './StorePage.css';
 
-const HangarPlanesPage = () => {
+const StorePage = () => {
   const navigate = useNavigate();
+  const storeRef = useRef(null); // ✅ Referencia al contenedor de la tienda
 
-  // Datos del usuario
-  const [userName, setUserName] = useState('');
-  const [wallet, setWallet] = useState(0);
-  const [score, setScore] = useState(0);
+  const [userData, setUserData] = useState({
+    userName: '',
+    wallet: 0,
+    score: 0,
+  });
 
-  // Datos del hangar
-  const [timeOfDay, setTimeOfDay] = useState('');
-  const [weather, setWeather] = useState('');
-  const [planes, setPlanes] = useState([]);
-
-  // Error
+  const [storePlanes, setStorePlanes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Cargar datos del usuario + hangar desde /user
-  const fetchUserData = async () => {
+  // ✅ Función para obtener datos del usuario y la tienda
+  const fetchUserDataAndStore = async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -30,137 +27,99 @@ const HangarPlanesPage = () => {
         return;
       }
 
-      const response = await axios.get('http://localhost:8080/user', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const userResponse = await axios.get('/aircraft/hangar/user', {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log('📡 Datos recibidos del backend:', response.data); // 👈 Debug
-
-      const data = response.data;
-
-      // Datos del usuario
-      setUserName(data.userName || '');
-      setWallet(data.wallet || 0);
-      setScore(data.score || 0);
-
-      // Datos del hangar
-      if (data.hangar) {
-        setTimeOfDay(data.hangar.timeOfDay || '');
-        setWeather(data.hangar.weather || '');
-        setPlanes(data.hangar.planes || []);
-      } else {
-        setPlanes([]);
+      if (userResponse.status === 200) {
+        setUserData(userResponse.data);
       }
+
+      const storeResponse = await axios.get('/aircraft/store/planes', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (storeResponse.status === 200) {
+        setStorePlanes(storeResponse.data);
+      }
+
+      setLoading(false);
     } catch (err) {
-      console.error('❌ Error al obtener el usuario:', err);
-      setError(err.response?.data?.message || 'Error al obtener datos del usuario.');
+      console.error('❌ Error al obtener datos:', err);
+      setError('⚠️ No se pudo obtener la información.');
+      setLoading(false);
     }
   };
 
-  // Llamada cuando se monta el componente
+  // 🔹 Cargar datos al montar el componente
   useEffect(() => {
-    fetchUserData();
+    fetchUserDataAndStore();
   }, []);
 
-  // Acciones sobre los aviones
-  const handleRepair = async (planeId) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/auth/login');
-        return;
+  // ✅ Función para manejar el scroll automático
+  useEffect(() => {
+    const storeContainer = storeRef.current;
+    if (!storeContainer) return;
+
+    const handleMouseMove = (event) => {
+      const { clientX } = event;
+      const { left, right, width } = storeContainer.getBoundingClientRect();
+      const edgeThreshold = 80; // 🔹 Distancia en píxeles para activar el scroll
+      const scrollSpeed = 5; // 🔹 Velocidad del scroll
+
+      if (clientX < left + edgeThreshold) {
+        storeContainer.scrollLeft -= scrollSpeed;
+      } else if (clientX > right - edgeThreshold) {
+        storeContainer.scrollLeft += scrollSpeed;
       }
-      await axios.post(`http://localhost:8080/aircraft/hangar/repair/${planeId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchUserData();
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Error al reparar el avión.');
-    }
-  };
+    };
 
-  const handleRefuel = async (planeId) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/auth/login');
-        return;
-      }
-      await axios.post(`http://localhost:8080/aircraft/hangar/refuel/${planeId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchUserData();
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Error al repostar el avión.');
-    }
-  };
+    storeContainer.addEventListener('mousemove', handleMouseMove);
 
-  const handleBattle = async (planeId) => {
-    console.log('🛩 Ir a batalla con avión ID:', planeId);
-  };
+    return () => {
+      storeContainer.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
 
-  // Video de fondo según timeOfDay + weather
-  const backgroundVideo = videoMap[timeOfDay]?.[weather] || '/hangarStatus/day-clear.MOV';
+  if (loading) {
+    return <p>Cargando tienda... ⏳</p>;
+  }
 
   return (
-    <div className="hangar-container">
+    <div className="hangar-page">
+      {/* ✅ Video de fondo de la tienda */}
       <video autoPlay loop muted className="background-video">
-        <source src={backgroundVideo} type="video/mp4" />
+        <source src="/videos/store.mp4" type="video/mp4" />
         Tu navegador no soporta el elemento <code>video</code>.
       </video>
 
-      {/* Cabecera con imagen Store + datos del usuario */}
+      {/* 🔹 Cabecera fija con tienda y usuario */}
       <div className="hangar-header">
         <img
           className="store-image"
-          src="/images/storeIcon.PNG"
+          src="/images/hangarBottom.PNG"
           alt="Store"
-          onClick={() => navigate('/store/planes')}
+          onClick={() => navigate('/aircraft/hangar/user')}
         />
-
         <div className="user-info">
-          <span className="user-name">{userName}</span>
-          <span className="wallet">Wallet: {wallet}</span>
-          <span className="score">Score: {score}</span>
+          <span className="user-name">{userData.userName}</span>
+          <span className="wallet">💰 {userData.wallet}</span>
+          <span className="score">🏆 {userData.score}</span>
         </div>
       </div>
 
-      <div className="hangar-content">
-        <img
-          src="/images/tituloHangar.png"
-          alt="Mi Hangar"
-          className="hangar-title"
-        />
-
-        {error && (
-          <p style={{ color: 'red' }}>{error}</p>
-        )}
-
-        {/* Lista de aviones o mensaje si no hay */}
-        {planes.length === 0 ? (
+      {/* ✅ Contenedor de aviones con scroll automático */}
+      <div className="store-container" ref={storeRef}>
+        {storePlanes.length === 0 ? (
           <div className="no-planes-message">
-            <p>No tienes aviones en tu hangar</p>
+            <p>Tienda cerrada en estos momentos.</p>
           </div>
         ) : (
-          <div className="planes-container">
-            {planes.map((plane) => (
-              <PlaneCard
-                key={plane.id}
-                plane={plane}
-                onRepair={handleRepair}
-                onRefuel={handleRefuel}
-                onBattle={handleBattle}
-              />
-            ))}
-          </div>
+          storePlanes.map((plane) => <PlaneSell key={plane.id} plane={plane} />)
         )}
       </div>
     </div>
   );
 };
 
-export default HangarPlanesPage;
+export default StorePage;

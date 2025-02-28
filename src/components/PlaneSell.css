@@ -1,0 +1,80 @@
+.plane-sell-card {
+  background: linear-gradient(135deg);
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+  width: 250px;
+  background-color: rgba(255, 255, 255, 0.6); /* 🔹 Blanco con 30% de opacidad */
+}
+
+@keyframes glowWeather {
+  0% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+  50% { box-shadow: 0px 0px 12px rgba(0, 183, 255, 1); }
+  100% { box-shadow: 0px 0px 6px rgba(0, 183, 255, 0.7); }
+}
+
+.plane-sell-card {
+  animation: glowWeather 1.5s infinite alternate;
+}
+
+.plane-sell-card:hover {
+  transform: scale(1.05);
+}
+
+.plane-image {
+  width: 120%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.plane-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.stat-container {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  padding: 3px;
+  position: relative;
+}
+
+.stat-bar {
+  height: 10px;
+  border-radius: 5px;
+  background-color: #28a745;
+}
+
+.stat-value {
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.buy-button {
+  background-color: gold;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    text-shadow: 0px 2px 6px rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 183, 255, 0.6); /* Glow suave */
+
+  }
+
+.buy-button:hover {
+  background-color: #ffd700;
+  transform: scale(1.05);
+}
