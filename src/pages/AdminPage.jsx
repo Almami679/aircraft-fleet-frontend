@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import PlaneCard from '../components/PlaneCard';
+import PlaneCardForAdmin from '../components/PlaneCardForAdmin';
 import './StorePage.css';
 
 const StorePage = () => {
   const navigate = useNavigate();
-  const storeRef = useRef(null); // ✅ Referencia al contenedor de la tienda
+  const storeRef = useRef(null);
 
   const [userData, setUserData] = useState({
     userName: '',
@@ -18,7 +18,7 @@ const StorePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // ✅ Función para obtener datos del usuario y la tienda
+  // ✅ Función para obtener datos del usuario y la lista de todos los aviones
   const fetchUserDataAndStore = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -27,6 +27,7 @@ const StorePage = () => {
         return;
       }
 
+      // ✅ Obtener datos del usuario
       const userResponse = await axios.get('/aircraft/hangar/user', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -35,6 +36,7 @@ const StorePage = () => {
         setUserData(userResponse.data);
       }
 
+      // ✅ Obtener todos los aviones del backend (Administración)
       const storeResponse = await axios.get('/aircraft/hangar/AllPlanes', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -51,13 +53,14 @@ const StorePage = () => {
     }
   };
 
+  // ✅ Actualizar el estado de los aviones al modificar uno
   const updatePlaneState = async () => {
-      try {
-        fetchUserDataAndStore(); // 🔹 Recargar TODO (wallet y aviones)
-      } catch (err) {
-        console.error("Error al actualizar estado del avión:", err);
-      }
-    };
+    try {
+      fetchUserDataAndStore();
+    } catch (err) {
+      console.error("Error al actualizar estado del avión:", err);
+    }
+  };
 
   // 🔹 Cargar datos al montar el componente
   useEffect(() => {
@@ -71,9 +74,9 @@ const StorePage = () => {
 
     const handleMouseMove = (event) => {
       const { clientX } = event;
-      const { left, right, width } = storeContainer.getBoundingClientRect();
-      const edgeThreshold = 80; // 🔹 Distancia en píxeles para activar el scroll
-      const scrollSpeed = 5; // 🔹 Velocidad del scroll
+      const { left, right } = storeContainer.getBoundingClientRect();
+      const edgeThreshold = 80;
+      const scrollSpeed = 5;
 
       if (clientX < left + edgeThreshold) {
         storeContainer.scrollLeft -= scrollSpeed;
@@ -83,25 +86,24 @@ const StorePage = () => {
     };
 
     storeContainer.addEventListener('mousemove', handleMouseMove);
-
     return () => {
       storeContainer.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
   if (loading) {
-    return <p>Cargando tienda... ⏳</p>;
+    return <p>Cargando todos los aviones... ⏳</p>;
   }
 
   return (
     <div className="hangar-page">
-      {/* ✅ Video de fondo de la tienda */}
+      {/* ✅ Video de fondo */}
       <video autoPlay loop muted className="background-video">
         <source src="/video.mp4" type="video/mp4" />
         Tu navegador no soporta el elemento <code>video</code>.
       </video>
 
-      {/* 🔹 Cabecera fija con tienda y usuario */}
+      {/* 🔹 Cabecera fija con usuario */}
       <div className="hangar-header">
         <img
           className="store-image"
@@ -120,14 +122,16 @@ const StorePage = () => {
       <div className="store-container" ref={storeRef}>
         {storePlanes.length === 0 ? (
           <div className="no-planes-message">
-            <p>Tienda cerrada en estos momentos.</p>
+            <p>Aviones no disponibles en este momento.</p>
           </div>
         ) : (
-          storePlanes.map((plane) => <PlaneCard
-                                                     key={plane.id}
-                                                     plane={plane}
-                                                        fetchUserDataAndStore={updatePlaneState}
-                                                   />)
+          storePlanes.map((plane) => (
+            <PlaneCardForAdmin
+              key={plane.userId}  // ✅ Ahora usa `userId` en lugar de `id`
+              user={plane}  // ✅ Pasamos el objeto completo `user`
+              fetchUserData={updatePlaneState}
+            />
+          ))
         )}
       </div>
     </div>

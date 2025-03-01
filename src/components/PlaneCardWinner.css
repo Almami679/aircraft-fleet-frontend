@@ -76,3 +76,27 @@
     transform: scale(1);
   }
 }
+/* 🔹 Botón de cerrar sesión */
+.logout-button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.8), rgba(200, 0, 0, 0.7));
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: background 0.3s ease-in-out;
+}
+
+.logout-button:hover {
+  background: linear-gradient(135deg, rgba(255, 50, 50, 1), rgba(200, 0, 0, 1));
+}
+
+.logout-button:active {
+  transform: scale(0.95);
+}

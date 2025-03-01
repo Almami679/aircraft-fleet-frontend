@@ -22,6 +22,16 @@ const HangarPlanesPage = () => {
   // Estado para la hora del día y clima del hangar
   const [timeOfDay, setTimeOfDay] = useState(null);
 
+  // 🔹 Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('role');
+
+    navigate('/auth/login'); // 🔹 Redirigir a la página de login
+    window.location.reload(); // 🔄 Refrescar la página para evitar problemas con el backend
+  };
+
   // Mapeo de iconos de clima
   const weatherIcons = {
     DESPEJADO: '☀️',
@@ -83,7 +93,7 @@ const HangarPlanesPage = () => {
   // 🔹 **Seleccionar el video de fondo según `videoMap`**
   const backgroundVideo = useMemo(() => {
     // 🔹 Seleccionar aleatoriamente un clima del mapa si está disponible
-    const availableWeathers = Object.keys(videoMap[normalizedTimeOfDay] || {});
+    const availableWeathers = Object.keys(videoMap[normalizedTimeOfDay] || []);
     const randomWeather = availableWeathers[Math.floor(Math.random() * availableWeathers.length)] || "DESPEJADO";
     return videoMap[normalizedTimeOfDay]?.[randomWeather] || '/hangarStatus/day-clear.MOV';
   }, [normalizedTimeOfDay]);
@@ -129,6 +139,11 @@ const HangarPlanesPage = () => {
           <span className="user-name">{userData.userName}</span>
           <span className="wallet">💰 : {userData.wallet}</span>
           <span className="score">🏆 : {userData.score}</span>
+
+          {/* 🔹 Botón de cerrar sesión */}
+          <button className="logout-button" onClick={handleLogout}>
+            ❌ Desconectar
+          </button>
         </div>
       </div>
 
@@ -137,7 +152,7 @@ const HangarPlanesPage = () => {
         {userData.planes.length === 0 ? (
           <div className="no-planes-message">
             <p>COMPRATE AVIONES</p>
-                <p>(o no tienes, o te los han destruido)</p>
+            <p>(o no tienes, o te los han destruido)</p>
           </div>
         ) : (
           <div className="planes-container">

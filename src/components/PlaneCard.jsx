@@ -5,6 +5,7 @@ import { getPlaneImage } from "../constants/planeMap";
 import { accessoryMap } from "../constants/accessoryMap"; // ✅ Importamos el map de accesorios
 import "./PlaneCard.css";
 
+
 const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPlane, opponentData }) => {
   const navigate = useNavigate();
 
@@ -14,6 +15,7 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPla
   const [buyingAccessory, setBuyingAccessory] = useState(false);
   const [updatingPlane, setUpdatingPlane] = useState(false);
   const [currentPlane, setCurrentPlane] = useState(plane);
+  const [message, setMessage] = useState("");
 
 
   useEffect(() => {
@@ -58,20 +60,38 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPla
       await axios.put(
         `/aircraft/hangar/update-plane/${planeId}`,
         null,
-        { headers: { Authorization: `Bearer ${token}` }, params: { action } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action },
+        }
       );
 
-      fetchUserData(); // Recargar los datos después de la acción
+      if (action === "SELL") {
+        setMessage("✅ Avión vendido.");
+
+        // ⏳ Esperar 2 segundos antes de actualizar los datos
+        setTimeout(() => {
+          setMessage(""); // 🔹 Limpiar el mensaje
+          fetchUserData(); // 🔄 Recargar los datos después del tiempo de espera
+        }, 2000);
+      } else {
+        fetchUserData(); // 🔄 Si no es venta, actualizar inmediatamente
+      }
     } catch (error) {
       console.error(`❌ Error en acción ${action}:`, error);
-      alert(`No se pudo realizar la acción: ${action}`);
+      setMessage(`⚠️ No se pudo realizar la acción: ${action}`);
+
+      // 🔹 También limpiar el mensaje después de 2s en caso de error
+      setTimeout(() => setMessage(""), 2000);
     }
   };
+
+
 
   // ✅ Función para comprar y equipar un accesorio
   const handleBuyAccessory = async () => {
     if (!selectedAccessory) {
-      alert("Selecciona un accesorio antes de comprarlo.");
+      setMessage("⚠️ Selecciona un accesorio antes de comprarlo.");
       return;
     }
 
@@ -82,7 +102,7 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPla
     const enumName = accessoryMap[accessoryName];
 
     if (!enumName) {
-      alert("Error: No se encontró el accesorio en el sistema.");
+      setMessage("⚠️ Error: No se encontró el accesorio en el sistema.");
       return;
     }
 
@@ -100,13 +120,15 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPla
         }
       );
 
-      alert("Accesorio comprado y equipado correctamente.");
+      setMessage("✅ Accesorio equipado.");
       fetchUserData(); // 🔹 Actualizar datos tras la compra
     } catch (error) {
       console.error("❌ Error al comprar accesorio:", error);
-      alert("No se pudo comprar el accesorio. Verifica tu saldo.");
+      setMessage("❌ Verifica tu saldo.");
     } finally {
       setBuyingAccessory(false);
+
+      setTimeout(() => setMessage(""), 2000);
     }
   };
 
@@ -114,7 +136,7 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPla
   const handleBattle = () => {
       if (!plane || !plane.id) {
           console.error("❌ Error: No se encontró el avión para la batalla.");
-          alert("No se pudo iniciar la batalla. Verifica que tienes un avión seleccionado.");
+          setMessage("No se pudo iniciar la batalla. Verifica que tienes un avión seleccionado.");
           return;
       }
 
@@ -160,20 +182,24 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPla
 
   return (
     <div className="plane-card">
-      {/* ✅ Si NO es un oponente, se muestra el botón de vender */}
-      {!isOpponent && (
-        <button
-          className="sell-button"
-          onClick={() => handlePlaneAction(plane.id, "SELL")}
-          disabled={updatingPlane}
-        >
-          💸 Vender avión 💸
-        </button>
-      )}
+        {/* ✅ Mensaje flotante */}
+              {message && <div className="message-box">{message}</div>}
+
 
       {/* ✅ Imagen del avión */}
       <img src={getPlaneImage(currentPlane)} alt={plane.name} className="plane-image" />
       <h3 className="plane-name">{plane.name}</h3>
+
+      {/* ✅ Si NO es un oponente, se muestra el botón de vender */}
+            {!isOpponent && (
+              <button
+                className="sell-button"
+                onClick={() => handlePlaneAction(plane.id, "SELL")}
+                disabled={updatingPlane}
+              >
+                💸 Vender avión 💸
+              </button>
+            )}
 
       {/* ✅ Mostrar piloto y puntaje (solo en oponentes) */}
       {isOpponent && (

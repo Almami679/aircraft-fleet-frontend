@@ -3,30 +3,53 @@ import axios from "axios";
 import { getPlaneImage } from "../constants/planeMap";
 import "./PlaneSell.css";
 
-const PlaneSell = ({ plane, fetchUserData }) => {
+// ✅ Mapeo de nombres de aviones a su Enum en el backend
+const planeEnumMap = {
+  "Spitfire": "SPITFIRE",
+  "Messerschmitt Bf 109": "MESSERSCHMITT_BF109",
+  "P-51 Mustang": "P51_MUSTANG",
+  "Mitsubishi A6M Zero": "ZERO",
+  "Focke-Wulf Fw 190": "FOCKE_WULF",
+  "Yakovlev Yak-3": "YAK_3"
+};
 
+const PlaneSell = ({ plane, fetchUserData }) => {
   // ✅ Función para comprar el avión
   const handleBuyPlane = async () => {
+    if (!plane || !plane.name) {
+      alert("Error: No se encontró la información del avión.");
+      return;
+    }
+
+    console.log("📌 DEBUG - Nombre del avión recibido:", plane.name);
+
+    const planeEnum = planeEnumMap[plane.name];
+
+    if (!planeEnum) {
+      alert(`Error: No se encontró el código enum para el avión "${plane.name}".`);
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        alert("⚠️ Debes iniciar sesión para comprar aviones.");
-        return;
-      }
+      if (!token) return;
 
       await axios.post(
-        `/aircraft/store/buy/plane`,
+        `/aircraft/store/buy/plane`, // 🔹 Ruta corregida
         null,
         {
           headers: { Authorization: `Bearer ${token}` },
-          params: { planeId: plane.id }
+          params: { model: planeEnum }, // ✅ Enviar el `model` como enum
         }
       );
 
-      alert("✅ Avión comprado con éxito.");
-      fetchUserData(); // 🔹 Actualizar los datos tras la compra
+      alert(`✅ Avión "${plane.name}" comprado con éxito.`);
+
+      // 🔹 Recargar datos del usuario después de la compra
+      fetchUserData();
+
     } catch (error) {
-      console.error("❌ Error al comprar avión:", error);
+      console.error("❌ Error al comprar el avión:", error);
       alert("No se pudo comprar el avión. Verifica tu saldo.");
     }
   };
