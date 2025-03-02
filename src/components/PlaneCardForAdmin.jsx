@@ -107,14 +107,7 @@ const PlaneCardForAdmin = ({ user, fetchUserData }) => {
 
   return (
     <div className="plane-card admin-plane-card">
-      {/* ✅ Botón de vender avión (ahora encima de la imagen) */}
-      <button
-        className="sell-button"
-        onClick={() => handlePlaneAction(plane.planeId, "SELL")}
-        disabled={updatingPlane}
-      >
-        ❌ Eliminar avion ❌
-      </button>
+
 
       {/* ✅ Imagen del avión */}
       <img
@@ -123,6 +116,15 @@ const PlaneCardForAdmin = ({ user, fetchUserData }) => {
         className="plane-image"
       />
       <h3 className="plane-name">{plane.name}</h3>
+
+      {/* ✅ Botón de vender avión (ahora encima de la imagen) */}
+            <button
+              className="sell-button"
+              onClick={() => handlePlaneAction(plane.planeId, "SELL")}
+              disabled={updatingPlane}
+            >
+              ❌ Eliminar avion ❌
+            </button>
 
       {/* ✅ Mostrar el nombre del propietario */}
       <h4 className="plane-owner">👤 Propietario: {username || "Desconocido"}</h4>

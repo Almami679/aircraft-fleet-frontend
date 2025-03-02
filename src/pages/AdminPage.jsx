@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import PlaneCardForAdmin from '../components/PlaneCardForAdmin';
-import './StorePage.css';
+import './AdminPage.css';
 
 const StorePage = () => {
   const navigate = useNavigate();
