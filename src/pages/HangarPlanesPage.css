@@ -14,16 +14,6 @@
   overflow-y: auto; /* Permite scroll solo en esta sección */
 }
 
-.planes-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  overflow-y: auto; /* Asegura que el scroll solo aplique en los aviones */
-  max-height: 60vh; /* Ajusta esto según la necesidad */
-  padding: 10px;
-}
-
 /* Contenedor principal que ocupa toda la pantalla */
 .hangar-container {
   position: relative;
@@ -247,29 +237,41 @@
   }
 
 
-/* Contenedor de las cards de aviones */
+/* 🚀 Contenedor de las cartas de aviones - Ajusta su altura a la de las cartas */
 .planes-container {
+  position: absolute; /* 🔹 Permite moverlo con 'top' */
+  top: calc(100% - 60vh); /* 🔹 Lo sube 10px aprox. Ajusta si es necesario */
+  left: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* ✅ Evita que las tarjetas se envuelvan en múltiples filas */
+  overflow-x: auto; /* ✅ Scroll solo horizontal */
+  overflow-y: hidden; /* ❌ No permitir scroll vertical */
   gap: 1.5rem; /* Espaciado entre aviones */
-  justify-content: center;
-  max-width: 2300px;
-  margin: 1rem auto;
-  padding: 1rem 1rem 5rem;
+  width: 100%;
+  height: auto; /* ✅ Se ajusta dinámicamente a la altura de las cartas */
+  justify-content: flex-start;
+  padding: 1rem;
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 10px;
-  /*height: calc(100% + 50%); /* Un tercio más alto */
-  max-height: none;
-  overflow: visible;
   transition: all 0.3s ease-in-out;
-  filter: drop-shadow(0px 4px 8px rgba(0, 183, 255, 0.5)); /* Efecto de sombra azul */
-
+  filter: drop-shadow(0px 4px 8px rgba(0, 183, 255, 0.5));
 }
 
-.planes-container:only-child {
-  overflow: hidden;
-  max-height: none;
+
+/* 🔥 Scroll estético */
+.planes-container::-webkit-scrollbar {
+  height: 10px; /* ✅ Grosor del scrollbar */
 }
+
+.planes-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 183, 255, 0.8);
+  border-radius: 5px;
+}
+
+.planes-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 123, 255, 0.9);
+}
+
 
 /* Estilos de las tarjetas de los aviones */
 .plane-card {
@@ -284,6 +286,7 @@
   text-align: center;
   transition: transform 0.2s ease-in-out;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 .plane-card:hover {
