@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { getPlaneImage } from "../constants/planeMap";
 import "./PlaneSell.css";
@@ -14,10 +14,12 @@ const planeEnumMap = {
 };
 
 const PlaneSell = ({ plane, fetchUserData }) => {
+  const [message, setMessage] = useState(""); // ✅ Hook dentro del componente
+
   // ✅ Función para comprar el avión
   const handleBuyPlane = async () => {
     if (!plane || !plane.name) {
-      alert("Error: No se encontró la información del avión.");
+      setMessage("❌ Error: No se encontró la información del avión.");
       return;
     }
 
@@ -26,7 +28,7 @@ const PlaneSell = ({ plane, fetchUserData }) => {
     const planeEnum = planeEnumMap[plane.name];
 
     if (!planeEnum) {
-      alert(`Error: No se encontró el código enum para el avión "${plane.name}".`);
+      setMessage(`❌ Error: No se encontró el código enum para el avión "${plane.name}".`);
       return;
     }
 
@@ -35,22 +37,36 @@ const PlaneSell = ({ plane, fetchUserData }) => {
       if (!token) return;
 
       await axios.post(
-        `/aircraft/store/buy/plane`, // 🔹 Ruta corregida
-        null,
+        `/aircraft/store/buy/plane`, // 🔹 Endpoint
+        null, // ✅ Se envía `null` en el cuerpo porque solo usamos `params`
         {
           headers: { Authorization: `Bearer ${token}` },
-          params: { model: planeEnum }, // ✅ Enviar el `model` como enum
+          params: { model: planeEnum }, // ✅ El `model` se envía como parámetro de consulta
         }
       );
 
-      alert(`✅ Avión "${plane.name}" comprado con éxito.`);
+      setMessage("✅ Avión comprado con éxito.");
 
-      // 🔹 Recargar datos del usuario después de la compra
-      fetchUserData();
+      // ⏳ Esperar 1.8s antes de actualizar los datos
+      setTimeout(() => {
+        setMessage(""); // 🔹 Limpiar el mensaje
+
+        // 🔹 Validar si `fetchUserData` está definido antes de llamarlo
+        if (typeof fetchUserData === "function") {
+          fetchUserData(); // 🔄 Recargar datos del usuario
+        } else {
+          console.warn("⚠️ Warning: fetchUserData no está definido.");
+        }
+      }, 1800);
 
     } catch (error) {
       console.error("❌ Error al comprar el avión:", error);
-      alert("No se pudo comprar el avión. Verifica tu saldo.");
+      setMessage("❌ Error al comprar el avión (Verifica tu saldo).");
+
+      // ⏳ Esperar 1.8s antes de limpiar el mensaje
+      setTimeout(() => {
+        setMessage(""); // 🔹 Limpiar el mensaje
+      }, 1800);
     }
   };
 
@@ -67,6 +83,9 @@ const PlaneSell = ({ plane, fetchUserData }) => {
       <button className="buy-button" onClick={handleBuyPlane}>
         💰 Comprar - {plane.price}$
       </button>
+
+      {/* ✅ Mensaje de compra */}
+      {message && <p className="message-box">{message}</p>}
     </div>
   );
 };

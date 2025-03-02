@@ -73,7 +73,7 @@ const PlaneCard = ({ plane, fetchUserData, isOpponent = false, selectedPlayerPla
         setTimeout(() => {
           setMessage(""); // 🔹 Limpiar el mensaje
           fetchUserData(); // 🔄 Recargar los datos después del tiempo de espera
-        }, 2000);
+        }, 1800);
       } else {
         fetchUserData(); // 🔄 Si no es venta, actualizar inmediatamente
       }
