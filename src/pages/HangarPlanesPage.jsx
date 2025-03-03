@@ -21,6 +21,7 @@ const HangarPlanesPage = () => {
 
   // Estado para la hora del día y clima del hangar
   const [timeOfDay, setTimeOfDay] = useState(null);
+  const [userRole, setUserRole] = useState(localStorage.getItem('role')); // Obtener el rol del usuario
 
   // 🔹 Función para cerrar sesión
   const handleLogout = () => {
@@ -29,7 +30,7 @@ const HangarPlanesPage = () => {
     localStorage.removeItem('role');
 
     navigate('/auth/login'); // 🔹 Redirigir a la página de login
-    window.location.reload(); // 🔄 Refrescar la página para evitar problemas con el backend
+    setTimeout(() => window.location.reload(), 500); // 🔄 Esperar antes de recargar
   };
 
   // Mapeo de iconos de clima
@@ -125,9 +126,9 @@ const HangarPlanesPage = () => {
       <div className="hangar-header">
         <img
           className="store-image"
-          src="/images/imagenesfront/storeIcon.PNG"
-          alt="Store"
-          onClick={() => navigate('/aircraft/store/planes')}
+          src={userRole === 'ADMIN' ? "/images/allPlanesButton.png" : "/images/imagenesfront/storeIcon.PNG"}
+          alt={userRole === 'ADMIN' ? "All Planes" : "Store"}
+          onClick={() => navigate(userRole === 'ADMIN' ? '/aircraft/hangar/AllPlanes' : '/aircraft/store/planes')}
         />
 
         {/* Casillero de clima basado en `videoMap` */}

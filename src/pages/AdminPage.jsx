@@ -67,6 +67,18 @@ const StorePage = () => {
     fetchUserDataAndStore();
   }, []);
 
+  // 🔹 Función para cerrar sesión
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('role');
+
+      navigate('/auth/login'); // 🔹 Redirigir a la página de login
+      window.location.reload(); // 🔄 Refrescar la página para evitar problemas con el backend
+    };
+
+
+
   // ✅ Función para manejar el scroll automático
   useEffect(() => {
     const storeContainer = storeRef.current;
@@ -113,10 +125,12 @@ const StorePage = () => {
         />
         <div className="user-info">
           <span className="user-name">{userData.userName}</span>
-          <span className="wallet">💰 {userData.wallet}</span>
-          <span className="score">🏆 {userData.score}</span>
-        </div>
-      </div>
+        {/* 🔹 Botón de cerrar sesión */}
+                  <button className="logout-button" onClick={handleLogout}>
+                    ❌ Desconectar
+                  </button>
+                </div>
+              </div>
 
       {/* ✅ Contenedor de aviones con scroll automático */}
       <div className="store-container" ref={storeRef}>

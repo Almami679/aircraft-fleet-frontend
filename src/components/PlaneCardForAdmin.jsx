@@ -22,86 +22,112 @@ const PlaneCardForAdmin = ({ user, fetchUserData }) => {
 
   // 🔹 Obtener accesorios disponibles
   useEffect(() => {
-    const fetchAccessories = async () => {
-      setLoadingAccessories(true);
+        const fetchAccessories = async () => {
+            setLoadingAccessories(true);
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return;
+
+                const response = await axios.get("/aircraft/store/accessories", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (response.status === 200) {
+                    setAccessories(response.data);
+                }
+            } catch (error) {
+                console.error("❌ Error al obtener accesorios:", error);
+            } finally {
+                setLoadingAccessories(false);
+            }
+        };
+
+
+    });
+
+    // ✅ Solo corregimos la parte que causaba errores de compilación
+
+
+    // ✅ Función para ejecutar acciones (reparar, repostar, vender)
+      const handlePlaneAction = async (planeId, action) => {
+          console.log("📌 Ejecutando acción:", action);
+          console.log("🛩️ Datos del avión antes de la acción:", planeId, currentPlane);
+
+          if (!planeId) {
+              console.error("❌ Error: planeId es undefined, no se puede continuar.");
+              setMessage("⚠️ No se pudo realizar la acción, ID de avión inválido.");
+              return;
+          }
+
+          try {
+              const token = localStorage.getItem("token");
+              if (!token) return;
+
+              await axios.put(
+                  `/aircraft/hangar/update-plane/${planeId}`,
+                  null,
+                  {
+                      headers: { Authorization: `Bearer ${token}` },
+                      params: { action },
+                  }
+              );
+
+              setMessage(`✅ Acción ${action} completada.`);
+              fetchUserData(); // 🔄 Recargar datos
+          } catch (error) {
+              console.error(`❌ Error en acción ${action}:`, error);
+              setMessage(`⚠️ No se pudo realizar la acción: ${action}`);
+
+              setTimeout(() => setMessage(""), 2000);
+          }
+      };
+
+
+
+
+    // ✅ Función para comprar y equipar un accesorio
+    const handleBuyAccessory = async () => {
+      if (!selectedAccessory) {
+        setMessage("⚠️ Selecciona un accesorio antes de comprarlo.");
+        return;
+      }
+
+      // 🔹 Extraer solo el nombre del accesorio sin el precio
+      const accessoryName = selectedAccessory.split(" - ")[0];
+
+      // 🔹 Convertir el nombre en `enumName` usando `accessoryMap`
+      const enumName = accessoryMap[accessoryName];
+
+      if (!enumName) {
+        setMessage("⚠️ Error: No se encontró el accesorio en el sistema.");
+        return;
+      }
+
+      setBuyingAccessory(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await axios.get("/aircraft/store/accessories", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.post(
+          `/aircraft/store/buy/accessory`,
+          null,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { planeId: plane.id, planeAccessory: enumName },
+          }
+        );
 
-        if (response.status === 200) {
-          setAccessories(response.data);
-        }
+        setMessage("✅ Accesorio equipado.");
+        fetchUserData(); // 🔹 Actualizar datos tras la compra
       } catch (error) {
-        console.error("❌ Error al obtener accesorios:", error);
+        console.error("❌ Error al comprar accesorio:", error);
+        setMessage("❌ Verifica tu saldo.");
       } finally {
-        setLoadingAccessories(false);
+        setBuyingAccessory(false);
+
+        setTimeout(() => setMessage(""), 2000);
       }
     };
-
-    fetchAccessories();
-  }, []);
-
-  // ✅ Función para ejecutar acciones (Reparar, Repostar, Vender)
-  const handlePlaneAction = async (planeId, action) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      await axios.put(
-        `/aircraft/hangar/update-plane/${planeId}`,
-        null,
-        { headers: { Authorization: `Bearer ${token}` }, params: { action } }
-      );
-
-      fetchUserData(); // Recargar los datos después de la acción
-    } catch (error) {
-      console.error(`❌ Error en acción ${action}:`, error);
-      alert(`No se pudo realizar la acción: ${action}`);
-    }
-  };
-
-  // ✅ Función para añadir un accesorio al avión
-  const handleBuyAccessory = async () => {
-    if (!selectedAccessory) {
-      alert("Selecciona un accesorio antes de aplicarlo.");
-      return;
-    }
-
-    const accessoryName = selectedAccessory.split(" - ")[0];
-    const enumName = accessoryMap[accessoryName];
-
-    if (!enumName) {
-      alert("Error: No se encontró el accesorio en el sistema.");
-      return;
-    }
-
-    setBuyingAccessory(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      await axios.post(
-        `/aircraft/store/buy/accessory`,
-        null,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { planeId: plane.planeId, planeAccessory: enumName },
-        }
-      );
-
-      alert("Accesorio equipado correctamente.");
-      fetchUserData();
-    } catch (error) {
-      console.error("❌ Error al equipar accesorio:", error);
-      alert("No se pudo equipar el accesorio.");
-    } finally {
-      setBuyingAccessory(false);
-    }
-  };
 
 
 
@@ -171,20 +197,15 @@ const PlaneCardForAdmin = ({ user, fetchUserData }) => {
 
       {/* ✅ Botones de acciones */}
       <div className="plane-actions">
-        <button
-          className="repair"
-          onClick={() => handlePlaneAction(plane.planeId, "REPAIR")}
-          disabled={updatingPlane}
-        >
-          {updatingPlane ? "🔄..." : "🔧 Reparar"}
-        </button>
-        <button
-          className="refuel"
-          onClick={() => handlePlaneAction(plane.planeId, "REFUEL")}
-          disabled={updatingPlane}
-        >
-          {updatingPlane ? "🔄..." : "⛽ Repostar"}
-        </button>
+        <>
+                    <button className="repair" onClick={() => handlePlaneAction(currentPlane?.planeId, "REPAIR")} disabled={updatingPlane}>
+                      {updatingPlane ? "🔄..." : "🔧 Reparar"}
+                    </button>
+                    <button className="refuel" onClick={() => handlePlaneAction(currentPlane?.planeId, "REFUEL")} disabled={updatingPlane}>
+                      {updatingPlane ? "🔄..." : "⛽ Repostar"}
+                    </button>
+
+                  </>
       </div>
     </div>
   );
