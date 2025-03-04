@@ -241,11 +241,10 @@
 /* 🚀 Contenedor de las cartas de aviones - Ajusta su altura a la de las cartas */
 .store-container {
   position: absolute;
-  top: 50%; /* Ajusta la posición más abajo */
   left: 50%;
-  transform: translate(-1%, 50%);
+  transform: translate(-1%, 25%);
   width: 80%;
-  max-height: 70vh; /* Limita la altura */
+  min-height: auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* Centrar los aviones */

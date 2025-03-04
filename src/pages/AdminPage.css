@@ -11,7 +11,7 @@
 
 .store-container {
   position: absolute; /* 🔹 Permite moverlo con 'top' */
-  top: calc(100% - 100vh); /* 🔹 Lo sube 10px aprox. Ajusta si es necesario */
+  top: calc(100% - 120vh); /* 🔹 Lo sube 10px aprox. Ajusta si es necesario */
   left: 0;
   display: flex;
   flex-wrap: nowrap; /* ✅ Evita que las tarjetas se envuelvan en múltiples filas */
