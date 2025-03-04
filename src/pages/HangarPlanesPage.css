@@ -240,7 +240,7 @@
 /* 🚀 Contenedor de las cartas de aviones - Ajusta su altura a la de las cartas */
 .planes-container {
   position: absolute; /* 🔹 Permite moverlo con 'top' */
-  top: calc(100% - 60vh); /* 🔹 Lo sube 10px aprox. Ajusta si es necesario */
+  top: calc(100% - 59vh); /* 🔹 Lo sube 10px aprox. Ajusta si es necesario */
   left: 0;
   display: flex;
   flex-wrap: nowrap; /* ✅ Evita que las tarjetas se envuelvan en múltiples filas */
@@ -251,10 +251,13 @@
   height: auto; /* ✅ Se ajusta dinámicamente a la altura de las cartas */
   justify-content: flex-start;
   padding: 1rem;
-  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 10px;
   transition: all 0.3s ease-in-out;
   filter: drop-shadow(0px 4px 8px rgba(0, 183, 255, 0.5));
+}
+
+.planes-container.single-plane {
+  justify-content: center;
 }
 
 

@@ -215,8 +215,7 @@ const Battle = () => {
             </button>
           </div>
         ) : (
-          <div className="planes-container">
-
+          <div className={`planes-container single-plane`}>
             <PlaneCard
               plane={{
                 ...opponentData.plane,
@@ -231,6 +230,7 @@ const Battle = () => {
           </div>
         )}
       </div>
+
 
 
     </div>

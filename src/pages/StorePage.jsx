@@ -109,7 +109,7 @@ const StorePage = () => {
       </div>
 
       {/* ✅ Contenedor de aviones con scroll automático */}
-      <div className="store-container" ref={storeRef}>
+      <div className="store-container">
         {storePlanes.length === 0 ? (
           <div className="no-planes-message">
             <p>Tienda cerrada en estos momentos.</p>
@@ -120,6 +120,7 @@ const StorePage = () => {
       </div>
     </div>
   );
+
 };
 
 export default StorePage;

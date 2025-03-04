@@ -156,7 +156,7 @@ const HangarPlanesPage = () => {
             <p>(o no tienes, o te los han destruido)</p>
           </div>
         ) : (
-          <div className="planes-container">
+          <div className={`planes-container ${userData.planes.length < 4 ? "single-plane" : ""}`}>
             {userData.planes.map((plane) => (
               <PlaneCard
                 key={plane.id}
@@ -167,6 +167,7 @@ const HangarPlanesPage = () => {
           </div>
         )}
       </div>
+
     </div>
   );
 };

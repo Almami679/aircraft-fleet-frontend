@@ -180,10 +180,10 @@ const BattleSimulationPage = () => {
       <div className="battle-content">
         {showWinner ? (
           <div className="battle-result-box">
-            <h2>{userWon ? "🏆 ¡Has ganado!" : "💥 Tu avión ha sido destruido..."}</h2>
+            <h2>{userWon ? " ¡ Has ganado !" : "💥 Tu avión ha sido destruido"}</h2>
 
             {/* ✅ Mostrar la tarjeta del avión ganador con estilo videojuego */}
-            <PlaneCardWinner plane={winnerData.plane} userWon={userWon} />
+            <PlaneCardWinner plane={winnerData.plane} userWon={winnerData} />
 
             <button onClick={() => navigate("/aircraft/hangar/user")} className="return-button">
               🔙 Volver al Hangar

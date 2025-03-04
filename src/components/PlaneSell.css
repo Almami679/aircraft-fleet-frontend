@@ -41,23 +41,6 @@
   margin-top: 5px;
 }
 
-.stat-container {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  padding: 3px;
-  position: relative;
-}
-
-.stat-bar {
-  height: 10px;
-  border-radius: 5px;
-  background-color: #28a745;
-}
-
-.stat-value {
-  font-size: 0.8rem;
-  margin-top: 5px;
-}
 
 .buy-button {
   background-color: gold;
