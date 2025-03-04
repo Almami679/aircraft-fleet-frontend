@@ -13,7 +13,7 @@ const planeImages = {
 // Mapeo de imágenes de accesorios **con nombres exactamente como en el backend**
 const accessoryImages = {
   "MG 42": "-MG42.PNG",
-  "Cañon 20mm Hispano": "-cannon.PNG",
+  "Canon 20mm Hsp": "-cannon.PNG",
   "Misil V2 Aleman": "-misile.PNG",
   "Blindaje Ligero": "-blindado.PNG",
   "Blindaje Medio": "-blindado.PNG",
