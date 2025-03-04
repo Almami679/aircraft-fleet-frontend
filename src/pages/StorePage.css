@@ -242,7 +242,7 @@
 .store-container {
   position: absolute;
   left: 50%;
-  transform: translate(-1%, 25%);
+  transform: translate(-1%, 90%);
   width: 80%;
   min-height: auto;
   display: flex;
