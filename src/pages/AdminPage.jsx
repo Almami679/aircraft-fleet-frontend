@@ -133,7 +133,7 @@ const StorePage = () => {
               </div>
 
       {/* ✅ Contenedor de aviones con scroll automático */}
-      <div className="store-container" ref={storeRef}>
+      <div className="admin-container" ref={storeRef}>
         {storePlanes.length === 0 ? (
           <div className="no-planes-message">
             <p>Aviones no disponibles en este momento.</p>
