@@ -51,6 +51,32 @@ const StorePage = () => {
     }
   };
 
+  // ✅ Función para añadir 1000 créditos al usuario
+  const handleAddCredits = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/auth/login');
+        return;
+      }
+
+      const response = await axios.post(
+        '/aircraft/store/addCredits',
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        setUserData(response.data);
+      }
+    } catch (err) {
+      console.error('❌ Error al añadir créditos:', err);
+      setError('⚠️ No se pudieron añadir créditos.');
+    }
+  };
+
   // 🔹 Cargar datos al montar el componente
   useEffect(() => {
     fetchUserDataAndStore();
@@ -101,12 +127,18 @@ const StorePage = () => {
           alt="Store"
           onClick={() => navigate('/aircraft/hangar/user')}
         />
-        <div className="user-info">
-          <span className="user-name">{userData.userName}</span>
-          <span className="wallet">💰 {userData.wallet}</span>
-          <span className="score">🏆 {userData.score}</span>
+        <div className="user-info-container">
+            <div className="user-info">
+              <span className="user-name">{userData.userName}</span>
+              <span className="wallet">💰 {userData.wallet}</span>
+              <span className="score">🏆 {userData.score}</span>
+              {/* ✅ Botón dentro del mismo casillero */}
+                          <button className="add-credits-btn" onClick={handleAddCredits}>
+                            ➕ Añadir creditos
+                          </button>
+            </div>
+          </div>
         </div>
-      </div>
 
       {/* ✅ Contenedor de aviones con scroll automático */}
       <div className="store-container">
@@ -120,7 +152,6 @@ const StorePage = () => {
       </div>
     </div>
   );
-
 };
 
 export default StorePage;

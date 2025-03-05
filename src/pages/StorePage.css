@@ -391,3 +391,18 @@
   transform: scale(0.95);
   filter: drop-shadow(0px 3px 6px rgba(0, 183, 255, 0.8));
 }
+
+.add-credits-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.add-credits-btn:hover {
+  background-color: #45a049;
+}
